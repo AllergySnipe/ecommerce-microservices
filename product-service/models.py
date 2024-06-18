@@ -15,6 +15,12 @@ class Product(db.Model):
     price = db.Column(db.Integer, nullable=True)
     image = db.Column(db.String(255))
 
+    def __init__(self, name, slug, price=None, image=None):
+        self.name = name
+        self.slug = slug
+        self.price = price
+        self.image = image
+
     def __repr__(self):
         return f'<product {self.id} {self.name}>'
 
