@@ -14,6 +14,7 @@ class Product(db.Model):
     slug = db.Column(db.String(255), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=True)
     image = db.Column(db.String(255))
+    version = db.Column(db.Integer, nullable=False, default=0)
 
     def __init__(self, name, slug, price=None, image=None):
         self.name = name
@@ -31,4 +32,5 @@ class Product(db.Model):
             'slug': self.slug,
             'price': self.price,
             'image': self.image,
+            'version': self.version
         }

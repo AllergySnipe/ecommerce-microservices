@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-
+from sqlalchemy.exc import SQLAlchemyError
 from models import Product, db
 
 product_blueprint = Blueprint('product_api_routes', __name__, url_prefix='/api/product')
@@ -26,7 +26,7 @@ def get_all_products():
 def create_product():
     product = Product(
         name=request.form['name'],
-        slug=request.form['slug'],
+        slug=request.form['name'],
         image=request.form['image'],
         price=request.form['price']
     )
@@ -38,3 +38,27 @@ def product_details(slug):
     if product:
         return jsonify({"result": product.serialize()}), 200
     return jsonify({"message": "No products found"}), 404
+
+@product_blueprint.route('/update/<slug>', methods=['PUT'])
+def update_product(slug):
+    data = request.json
+    product = Product.query.filter_by(slug=slug).first()
+    
+    if not product:
+        return jsonify({'message': 'Product not found'}), 404
+
+    if product.version != data.get('version'):
+        return jsonify({'message': 'Conflict detected. The product has been modified by another transaction.'}), 409
+
+    try:
+        product.name = request.form['name']
+        product.slug = request.form['name']
+        product.price = request.form['price']
+        product.image = request.form['image']
+        product.version += 1
+
+        db.session.commit()
+        return jsonify({'message': 'Product updated successfully', 'result': product.serialize()}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
