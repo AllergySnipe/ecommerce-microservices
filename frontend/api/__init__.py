@@ -1,3 +1,3 @@
-USER_API_URL = 'http://127.0.0.1:5001'
-PRODUCT_API_URL = 'http://127.0.0.1:5002'
-ORDER_API_URL = 'http://127.0.0.1:5003'
+USER_API_URL = 'http://user-service-c:5001'
+PRODUCT_API_URL = 'http://product-service-c:5002'
+ORDER_API_URL = 'http://order-service-c:5003'
