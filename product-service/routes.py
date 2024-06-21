@@ -14,6 +14,7 @@ def commit_to_db(instance, success_message, failure_message):
         return jsonify({'message': success_message, 'result': instance.serialize()}), 201
     except Exception as e:
         print(f"Error: {e}")
+        db.session.rollback()
         return jsonify({'message': failure_message}), 500
 
 @product_blueprint.route('/all', methods=['GET'])
@@ -26,7 +27,7 @@ def get_all_products():
 def create_product():
     product = Product(
         name=request.form['name'],
-        slug=request.form['name'],
+        slug=request.form['slug'],
         image=request.form['image'],
         price=request.form['price']
     )
@@ -41,24 +42,18 @@ def product_details(slug):
 
 @product_blueprint.route('/update/<slug>', methods=['PUT'])
 def update_product(slug):
-    data = request.json
     product = Product.query.filter_by(slug=slug).first()
-    
+    curr_version = product.version
     if not product:
         return jsonify({'message': 'Product not found'}), 404
 
-    if product.version != data.get('version'):
+    if curr_version != int(request.form['version']):
         return jsonify({'message': 'Conflict detected. The product has been modified by another transaction.'}), 409
 
-    try:
-        product.name = request.form['name']
-        product.slug = request.form['name']
-        product.price = request.form['price']
-        product.image = request.form['image']
-        product.version += 1
-
-        db.session.commit()
-        return jsonify({'message': 'Product updated successfully', 'result': product.serialize()}), 200
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({'message': str(e)}), 500
+    product.name=request.form['name']
+    product.slug=request.form['slug']
+    product.image=request.form['image']
+    product.price=request.form['price']
+    product.version=curr_version + 1
+    db.session.commit()
+    return jsonify({'message': 'Product updated', 'result': product.serialize()}), 200

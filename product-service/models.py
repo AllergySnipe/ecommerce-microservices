@@ -16,11 +16,12 @@ class Product(db.Model):
     image = db.Column(db.String(255))
     version = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, name, slug, price=None, image=None):
+    def __init__(self, name, slug, price=None, image=None, version=0):
         self.name = name
         self.slug = slug
         self.price = price
         self.image = image
+        self.version = version
 
     def __repr__(self):
         return f'<product {self.id} {self.name}>'
