@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          image: allergysnip/product-service:latest
+          ports:
+            - containerPort: 5002
+          volumeMounts:
+            - mountPath: /productapp
+              name: productapp-volume
+      volumes:
+        - name: productapp-volume
+          persistentVolumeClaim:
+            claimName: productapp-pvc

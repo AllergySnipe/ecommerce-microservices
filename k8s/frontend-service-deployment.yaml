@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+        - name: frontend-service
+          image: allergysnip/frontend-service:latest
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - mountPath: /frontendapp
+              name: frontendapp-volume
+      volumes:
+        - name: frontendapp-volume
+          persistentVolumeClaim:
+            claimName: frontendapp-pvc
