@@ -9,8 +9,7 @@ volumes:
 services:
   user-service:
     container_name: user-service-c
-    build:
-      context: ./user-service
+    image: allergysnip/user-service:latest  # Use the image from Docker Hub
     ports:
       - "5001:5001"
     volumes:
@@ -19,8 +18,7 @@ services:
 
   product-service:
     container_name: product-service-c
-    build:
-      context: ./product-service
+    image: allergysnip/product-service:latest  # Use the image from Docker Hub
     ports:
       - "5002:5002"
     volumes:
@@ -29,8 +27,7 @@ services:
 
   order-service:
     container_name: order-service-c
-    build:
-      context: ./order-service
+    image: allergysnip/order-service:latest  # Use the image from Docker Hub
     ports:
       - "5003:5003"
     volumes:
@@ -39,11 +36,9 @@ services:
 
   frontend-service:
     container_name: frontend-service-c
-    build:
-      context: ./frontend
+    image: allergysnip/frontend-service:latest  # Use the image from Docker Hub
     ports:
       - "5000:5000"
     volumes:
       - frontendapp:/frontendapp
     restart: always
-
